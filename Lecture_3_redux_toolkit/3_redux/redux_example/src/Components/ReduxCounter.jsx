@@ -1,17 +1,19 @@
-import { useState }  from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import counterSlice from "../CounterSlics";
+const actions = counterSlice.actions;
 
 function ReduxCounter() {
+    const count = useSelector((store) => store.counterSection.count);
+    const dispatch = useDispatch();
 
-    const [count, setCount] = useState(0);
-    // bussiness logic
     const increment = () => {
-        setCount(count + 1);
+        dispatch(actions.increment());
     }
     const decrement = () => {
-        setCount(count - 1);
+        dispatch(actions.decrement());
     }
 
-    // ui 
     return <div style={{
         height: "100vh",
         display: "flex",

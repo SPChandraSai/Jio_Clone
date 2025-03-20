@@ -1,9 +1,9 @@
 import NormalCounter from './components/NormalCounter';
+import ReduxCounter from './Components/ReduxCounter';
 function App() {
   return (
-    <>
-      <NormalCounter/>      
-    </>
+    <ReduxCounter/>      
+  
   )
 }
 
