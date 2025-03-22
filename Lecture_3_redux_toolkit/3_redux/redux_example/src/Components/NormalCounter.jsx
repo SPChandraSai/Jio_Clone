@@ -1,7 +1,7 @@
 import { useState }  from "react";
 
 function Counter() {
-
+    // state management
     const [count, setCount] = useState(0);
     // bussiness logic
     const increment = () => {
