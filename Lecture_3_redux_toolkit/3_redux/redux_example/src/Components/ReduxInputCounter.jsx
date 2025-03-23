@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
+import { useDispatch } from "react-redux";
+import counterInputSlice from "../redux/slice/CounterInputSlice";
+const actions=counterInputSlice.actions;
 function ReduxInputCounter() {
     // state management
-    const { count, delta } = useSelector((store) => store.counterInputSlice);
+    const { count } = useSelector((store) => store.counterInputSlice);
     const [value, setValue] = useState("");
-
+    const dispatch=useDispatch();
     // bussiness logic
     const increment = () => {
-        setCount(count + delta);
+        dispatch(actions.increment());
     }
     const decrement = () => {
-        setCount(count - delta);
+        dispatch(actions.decrement());
     }
     const updateDeltaHandler = () => {
-        setDelta(Number(value));
+        dispatch(actions.updateDelta(value));
     }
     // ui 
     return (

@@ -14,8 +14,10 @@ const counterInputSlice = createSlice({
         decrement:(state)=>{
             state.count-=state.delta;
         },
-        updateDelta:(state)=>{
-            
+        updateDelta:(state, params)=>{
+            // to access just do "params.payload"
+            const delta=params.payload;
+            state.delta=delta;
         }
     }
 })
