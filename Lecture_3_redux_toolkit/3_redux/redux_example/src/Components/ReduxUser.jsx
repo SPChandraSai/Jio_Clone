@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import fetchUserMiddleWare from '../redux/middleWare/fetchUserMiddleWare';
 
-function UserComponent() {
+function ReduxUserComponent() {
     const {user, loading, error}=useSelector(store =>store.userSlice);
     const dispatch=useDispatch();
     
     useEffect(() => {
-        dispatch(fetchUserMiddleWare());
+        dispatch(fetchUserMiddleWare(10));
     }, [])
 
     if(loading){
@@ -31,4 +31,4 @@ function UserComponent() {
     )
 }
 
-export default UserComponent
+export default ReduxUserComponent
