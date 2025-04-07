@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const app = express();
 const cookieParser = require("cookie-parser");
 const UserModel = require("./userModel");
+const emailSender = require("./DynamicEmailSender");
 
 dotenv.config();
 /******************db connection****************/
@@ -98,7 +99,7 @@ async function loginHandler(req, res) {
 }
 
 const otpGenerator = function () {
-    return Math.floor(100000+Math.random()*900000);
+    return Math.floor(100000 + Math.random() * 900000);
 }
 
 async function forgotPasswordHandler(req, res) {
@@ -129,19 +130,21 @@ async function forgotPasswordHandler(req, res) {
             })
         }
         // step 3
-        const otp=otpGenerator();
-        user.otp=otp;
-        user.otpExpire=Date.now()+1000*60*10; //10 min
-        
-        await user.save();
+        const otp = otpGenerator();
+        user.otp = otp;
+        user.otpExpire = Date.now() + 1000 * 60 * 10; //10 min
+
+        await user.save({ validateBeforeSave: false });
 
         // email send
         res.status(200).json({
             message: "otp sent successfully",
             status: "success",
-            otp:otp,
-            resetURL:`http:localhost:3000/api/auth/resetPassword/${user["_id"]}`,
+            otp: otp,
+            resetURL: `http:localhost:3000/api/auth/resetPassword/${user["_id"]}`,
         })
+        const templateData = { name: user.name, otp: user.otp };
+        await emailSender("./templates/otp.html", user.email, templateData);
     }
     catch (err) {
         console.log("err", err);
@@ -153,7 +156,65 @@ async function forgotPasswordHandler(req, res) {
 }
 
 async function resetPasswordHandler(req, res) {
+    try {
+        let resetDetails = req.body;
+        // to check if required fields are there or not
+        if (!resetDetails.password || !resetDetails.otp || !resetDetails.confirmPassword || resetDetails.password != resetDetails.confirmPassword) {
+            res.status(401).json({
+                status: "failure",
+                message: "invalid request"
+            })
+        }
+        const userId=req.params.userId;
+        const user=await UserModel.findById(userId);
+        // if user is not present
+        if(user==null){
+            return res.status(404).json({
+                status:"failure",
+                message:"user not found"
+            })
+        }
+        // if otp is not present in dp user
+        if(user.otp==undefined){
+            return res.status(401).json({
+                status:"failure",
+                message:"unauthorized access to reset the Password"
+            })
+        }
+        // if otp is expired
+        if(Date.now()>user.otpExpire){
+            return res.status(401).json({
+                status:"failure",
+                message:"otp expired"
+            })
+        }
+        // if otp is incorrect
+        if(user.otp!=resetDetails.otp){
+            return res.status(401).json({
+                status:"failure",
+                message:"otp is incorrect"
+            })
+        }
 
+        user.password=resetDetails.password;
+        user.confirmPassword=resetDetails.confirmPassword;
+        // remove the otp from the user
+        user.otp=undefined;
+        user.otpExpire=undefined;
+        await user.save();
+
+        res.status(200).json({
+            status:"success",
+            message:"password reset successfully"
+        })
+    }
+    catch (err) {
+        console.log("err", err);
+        res.status(500).json({
+            message: err.messsage,
+            status: "failure"
+        })
+    }
 }
 
 app.post("/api/auth/login", loginHandler);
