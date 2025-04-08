@@ -159,53 +159,54 @@ async function resetPasswordHandler(req, res) {
     try {
         let resetDetails = req.body;
         // to check if required fields are there or not
-        if (!resetDetails.password || !resetDetails.otp || !resetDetails.confirmPassword || resetDetails.password != resetDetails.confirmPassword) {
+        if (!resetDetails.password || !resetDetails.confirmPassword || !resetDetails.otp || resetDetails.password != resetDetails.confirmPassword) {
             res.status(401).json({
                 status: "failure",
                 message: "invalid request"
             })
         }
-        const userId=req.params.userId;
-        const user=await UserModel.findById(userId);
+        const userId = req.params.userId;
+        const user = await UserModel.findById(userId);
         // if user is not present
-        if(user==null){
+        if (user == null) {
             return res.status(404).json({
-                status:"failure",
-                message:"user not found"
+                status: "failure",
+                message: "user not found"
             })
         }
         // if otp is not present in dp user
-        if(user.otp==undefined){
+        if (user.otp == undefined) {
             return res.status(401).json({
-                status:"failure",
-                message:"unauthorized access to reset the Password"
+                status: "failure",
+                message: "unauthorized access to reset the Password"
             })
         }
         // if otp is expired
-        if(Date.now()>user.otpExpire){
+        if (Date.now() > user.otpExpire) {
             return res.status(401).json({
-                status:"failure",
-                message:"otp expired"
+                status: "failure",
+                message: "otp expired"
             })
         }
         // if otp is incorrect
-        if(user.otp!=resetDetails.otp){
+        if (user.otp != resetDetails.otp) {
             return res.status(401).json({
-                status:"failure",
-                message:"otp is incorrect"
+                status: "failure",
+                message: "otp is incorrect"
             })
         }
 
-        user.password=resetDetails.password;
-        user.confirmPassword=resetDetails.confirmPassword;
+        user.password = resetDetails.password;
+        user.confirmPassword = resetDetails.confirmPassword;
+        // console.log("225", user);
         // remove the otp from the user
-        user.otp=undefined;
-        user.otpExpire=undefined;
+        user.otp = undefined;
+        user.otpExpire = undefined;
         await user.save();
 
         res.status(200).json({
-            status:"success",
-            message:"password reset successfully"
+            status: "success",
+            message: "password reset successfully"
         })
     }
     catch (err) {
