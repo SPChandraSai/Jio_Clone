@@ -218,10 +218,26 @@ async function resetPasswordHandler(req, res) {
     }
 }
 
+
+
+
+
+async function getUpcomingMovies(req, res) {
+    const upcomingMovies = await getMediaList(TNDB_ENDPOINT.fetchUpcoming);
+    res.status(200).json({
+        status: "success",
+        message: upcomingMovies
+    })
+}
+
 app.post("/api/auth/login", loginHandler);
 app.post("/api/auth/signup", signupHandler);
 app.patch("/api/auth/forgetPassword", forgotPasswordHandler);
 app.patch("/api/auth/resetPassword/:userId", resetPasswordHandler);
+
+app.get("/api/movies/currentPlaying", getCurrentMovies);
+app.get("/api/movies/topRated", getTopRatedMovies);
+app.get("/api/movies/upcoming", getUpcomingMovies);
 
 app.listen(3000, function () {
     console.log("server started on port 3000")
