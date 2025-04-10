@@ -1,9 +1,5 @@
-async function getMediaList(endpoint) {
-    const url = tmdbBASEURL + endpoint;
-    const response = await fetch(url, { method: 'GET', headers: headers })
-    const data = response.json()
-    return data
-}
+const { getMediaList } = require("../utility");
+
 
 async function getCurrentMovies(req, res) {
     // db vaala kaam ho raha hy idhr
@@ -20,4 +16,16 @@ async function getTopRatedMovies(req, res) {
         status: "success",
         message: TopRatedMovies
     })
+}
+
+async function getUpcomingMovies(req, res) {
+    const upcomingMovies = await getMediaList(TNDB_ENDPOINT.fetchUpcoming);
+    res.status(200).json({
+        status: "success",
+        message: upcomingMovies
+    })
+}
+
+module.exports={
+    getCurrentMovies, getTopRatedMovies, getUpcomingMovies
 }

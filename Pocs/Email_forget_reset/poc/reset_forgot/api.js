@@ -5,6 +5,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const UserModel = require("./userModel");
 const emailSender = require("./DynamicEmailSender");
+const { getCurrentMovies, getTopRatedMovies, getUpcomingMovies } = require("./controllers/movieController");
 
 dotenv.config();
 /******************db connection****************/
@@ -216,18 +217,6 @@ async function resetPasswordHandler(req, res) {
             status: "failure"
         })
     }
-}
-
-
-
-
-
-async function getUpcomingMovies(req, res) {
-    const upcomingMovies = await getMediaList(TNDB_ENDPOINT.fetchUpcoming);
-    res.status(200).json({
-        status: "success",
-        message: upcomingMovies
-    })
 }
 
 app.post("/api/auth/login", loginHandler);
