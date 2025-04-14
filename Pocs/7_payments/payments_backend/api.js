@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require('dotenv');
 const Razorpay = require('razorpay');
 const shortId = require("short-unique-id");
+const cors = require('cors');
 dotenv.config();
 const { PORT, RAZORPAY_PUBLIC_KEY, RAZORPAY_PRIVATE_KEY } = process.env;
 const uid = new shortId({ length: 10 });
@@ -18,6 +19,9 @@ app.get("/", (req, res) => {
         message: "received req"
     })
 })
+// you are allowing any user to access your server as cross origin.
+app.use(cors());
+app.use(express.json());
 
 app.post("/checkout", async (req, res) => {
     try {
@@ -44,6 +48,11 @@ app.post("/checkout", async (req, res) => {
             message: err.message
         })
     }
+})
+
+app.post("/verify", function(){
+    //that payment is done via razorpay.
+    //update the status of the user like order, premium etc.
 })
 
 
