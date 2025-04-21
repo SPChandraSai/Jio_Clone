@@ -77,7 +77,7 @@ export default function Header() {
                     Go Premium
                 </Button>
             </nav>
-            <nav className="hidden lg:flex items-center space-x-6">
+            <nav className="lg:flex items-center space-x-6">
                 <Link href="/" className="hover:text-gray-300">Home</Link>
                 <Link href="/movies" className="hover:text-gray-300">Movies</Link>
                 <Link href="/tv" className="hover:text-gray-300">TV Shows</Link>
