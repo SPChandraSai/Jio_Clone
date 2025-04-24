@@ -1,3 +1,11 @@
+const UserModel = require("../model/UserModel");
+const emailSender = require("../utility/DynamicEmailSender");
+const jwt = require("jsonwebtoken");
+const promisify = require("util").promisify;
+const promisifiedJWTSign = promisify(jwt.sign);
+const promisifiedJWTVerify = promisify(jwt.verify);
+const { JWT_SECRET_KEY } = process.env;
+
 async function signupHandler(req, res) {
     try {
         const userObject = req.body;
@@ -55,7 +63,7 @@ async function loginHandler(req, res) {
         }
 
         //token create
-        const authToken = await promisdiedJWTsign({ id: user["_id"] }, process.env.JWT_SECRET_KEY);
+        const authToken = await promisifiedJWTSign({ id: user["_id"] }, process.env.JWT_SECRET_KEY);
         //token -> cookies
         res.cookie("jwt", authToken, {
             maxAge: 1000 * 60 * 60 * 24,

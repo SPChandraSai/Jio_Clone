@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const express = require("express");
-const dotenv = require("dotenv");
 const app = express();
+const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 
 dotenv.config();
@@ -24,8 +24,8 @@ const DiscoverRouter = require("./Routers/DiscoverRouter");
 
 app.use("/api/auth", AuthRouter);
 app.use("/api/movies", MovieRouter);
-app.use("api/tv", TvShowsRouter);
-app.use("api/discover", DiscoverRouter);
+app.use("/api/tv", TvShowsRouter);
+app.use("/api/discover", DiscoverRouter);
 
 app.listen(3000, function () {
     console.log("server started on port 3000")
